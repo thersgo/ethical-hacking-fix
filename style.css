@@ -1,0 +1,4 @@
+.dev-note::after {
+  content: " DEV_NOTE: Ära kunagi pane paroole koodi.";
+  display: none;
+}
