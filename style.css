@@ -1,4 +1,5 @@
+/* “Peidetud” info CSS-is – nähtav ainult koodi vaadates */
 .dev-note::after {
-  content: " DEV_NOTE: Ära kunagi pane paroole koodi.";
+  content: " DEV_NOTE: Ära kunagi pane paroole või API võtmeid koodi.";
   display: none;
 }

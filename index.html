@@ -3,31 +3,66 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Mini Login – (halb) näide</title>
+    <title>Ethical Hacking – Demo rakendus</title>
 
     <!-- TODO: EEMALDA ENNE PRODUKTSIOONI!!!
+       Admin kasutaja:
        username: admin
+       password: SuperSecret123!
   -->
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Lisa ainult siis, kui tahad dev-note pseudoelemendi “salateksti” alles jätta -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="min-h-screen bg-slate-100 flex items-center justify-center">
-    <div id="app" class="w-full max-w-md p-6">
+    <div id="app" class="w-full max-w-3xl p-6">
 
-        <h1 class="text-2xl font-bold mb-2 text-slate-800">
-            Õpilaste mini-login
-        </h1>
+        <header class="mb-4 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Ethical Hacking – Demo</h1>
+                <p class="text-xs text-slate-500">
+                    See on TAHTLIKULT ebaturvaline rakendus. Õpilaste ülesanne on vead üles leida ja parandada.
+                </p>
+            </div>
 
-        <p class="text-sm text-slate-600 mb-4">
-            Proovi sisse logida. Kui ei õnnestu, mõtle, mida veebiarendaja on valesti teinud.
-        </p>
+            <div class="text-right text-xs text-slate-600">
+                <p v-if="loggedInUser">Sisselogitud: <span class="font-semibold">{{ loggedInUser.username }}</span></p>
+                <p v-else class="italic">Pole sisse logitud</p>
+                <button v-if="loggedInUser" @click="logout" class="mt-1 text-xs text-red-600 hover:underline">
+                    Logi välja
+                </button>
+            </div>
+        </header>
 
-        <div class="bg-white shadow-md rounded-lg p-5">
+        <!-- NAVI -->
+        <nav class="flex flex-wrap gap-2 mb-5">
+            <button @click="currentPage = 'login'" :class="navClass('login')">
+                Login
+            </button>
+            <button @click="currentPage = 'profile'" :class="navClass('profile')">
+                Profiil
+            </button>
+            <button @click="currentPage = 'admin'" :class="navClass('admin')">
+                Admin paneel
+            </button>
+            <button @click="currentPage = 'settings'" :class="navClass('settings')">
+                Seaded & API
+            </button>
+            <button @click="currentPage = 'feedback'" :class="navClass('feedback')">
+                Tagasiside
+            </button>
+        </nav>
+
+        <!-- LEHT: LOGIN -->
+        <section v-if="currentPage === 'login'" class="bg-white shadow-md rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Login</h2>
+            <p class="text-sm text-slate-600 mb-4">
+                Proovi sisse logida. Kui ei õnnestu, mõtle, millised vead arendaja koodis teinud on.
+            </p>
+
             <div class="mb-4">
                 <label for="username" class="block text-sm font-medium mb-1 text-slate-700">
                     Kasutajanimi
@@ -54,14 +89,136 @@
             </p>
 
             <p class="mt-3 text-xs text-slate-500">
-
+                Vihje: vaata View Page Source, DevTools &gt; Console, Sources. Arendaja on olnud VÄGA hooletu.
             </p>
-        </div>
 
-        <!-- Veel üks "peidetud" vihje -->
-        <!-- Encoded note (base64): dXNlcm5hbWU6IGFkbWluLCBwYXNzd29yZDogU3VwZXJTZWNyZXQxMjMh -->
+            <!-- Encoded note (base64): dXNlcm5hbWU6IGFkbWluLCBwYXNzd29yZDogU3VwZXJTZWNyZXQxMjMh -->
+        </section>
 
-        <div class="dev-note mt-4 text-[0.75rem] text-slate-400">
+        <!-- LEHT: PROFIIL -->
+        <section v-else-if="currentPage === 'profile'" class="bg-white shadow-md rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Profiil</h2>
+
+            <div v-if="!loggedInUser" class="text-sm text-red-600">
+                Sa pole sisse logitud. Mine kõigepealt <span class="font-semibold">Login</span> lehele.
+            </div>
+
+            <div v-else class="space-y-2 text-sm text-slate-700">
+                <p><span class="font-semibold">Kasutajanimi:</span> {{ loggedInUser.username }}</p>
+                <p><span class="font-semibold">E-mail:</span> {{ loggedInUser.email }}</p>
+                <p><span class="font-semibold">Roll:</span> {{ loggedInUser.role }}</p>
+                <p><span class="font-semibold">Isiklik märkus:</span> {{ loggedInUser.personalNote }}</p>
+
+                <div class="mt-3 border-t pt-3">
+                    <p class="font-semibold text-slate-800 mb-1">„Salajane“ token:</p>
+                    <p class="text-xs break-all text-slate-500">
+                        {{ privateToken }}
+                    </p>
+                    <p class="mt-1 text-xs text-red-600">
+                        NB! See on tahtlik viga – mitte kunagi ei tohiks sellist infot kasutajale kuvada.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEHT: ADMIN PANEEL -->
+        <section v-else-if="currentPage === 'admin'" class="bg-white shadow-md rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Admin paneel</h2>
+
+            <p class="text-xs text-slate-500 mb-2">
+                NB! Admin paneel on TAHTLIKULT halvasti kaitstud. Õpilaste ülesanne on see turvalisemaks teha.
+            </p>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-xs border">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="border px-2 py-1 text-left">Kasutaja</th>
+                            <th class="border px-2 py-1 text-left">E-mail</th>
+                            <th class="border px-2 py-1 text-left">Roll</th>
+                            <th class="border px-2 py-1 text-left">Parool (PLAINTEXT!)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user in users" :key="user.username">
+                            <td class="border px-2 py-1">{{ user.username }}</td>
+                            <td class="border px-2 py-1">{{ user.email }}</td>
+                            <td class="border px-2 py-1">{{ user.role }}</td>
+                            <td class="border px-2 py-1 text-red-600 font-mono">{{ user.password }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="mt-3 text-xs text-red-600">
+                Siin on vähemalt 3 rasket turvaviga. Leia need ja mõtle, kuidas lahendada.
+            </p>
+        </section>
+
+        <!-- LEHT: SEADED & API -->
+        <section v-else-if="currentPage === 'settings'" class="bg-white shadow-md rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Seaded & API</h2>
+
+            <p class="text-sm text-slate-700 mb-3">
+                Siin lehel on näha API võtmed ja autentimis-tokenid, mida EI tohiks kunagi frontendis niimoodi hoida.
+            </p>
+
+            <div class="space-y-3 text-xs font-mono bg-slate-50 border rounded p-3">
+                <div>
+                    <span class="font-semibold text-slate-700">FAKE_API_KEY:</span>
+                    <span class="break-all text-slate-500">{{ apiKey }}</span>
+                </div>
+                <div>
+                    <span class="font-semibold text-slate-700">FAKE_JWT_TOKEN:</span>
+                    <span class="break-all text-slate-500">{{ jwtToken }}</span>
+                </div>
+                <div>
+                    <span class="font-semibold text-slate-700">localStorage token:</span>
+                    <span class="break-all text-slate-500">{{ storedToken }}</span>
+                </div>
+            </div>
+
+            <p class="mt-3 text-xs text-red-600">
+                NB! Õpilaste ülesanne on pakkuda välja, kuidas sellist infot päriselus <u>õigesti</u> hoiustada ja
+                käidelda.
+            </p>
+        </section>
+
+        <!-- LEHT: TAGASISIDE (XSS-ohtlik) -->
+        <section v-else-if="currentPage === 'feedback'" class="bg-white shadow-md rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Tagasiside</h2>
+
+            <p class="text-sm text-slate-700 mb-3">
+                Siia saad kirjutada tagasisidet. Arendaja on otsustanud selle „ilusasti“ renderdada...
+            </p>
+
+            <textarea v-model="feedbackText" rows="3"
+                class="w-full border border-slate-300 rounded px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Kirjuta siia midagi (näiteks &lt;b&gt;rasvases&lt;/b&gt;)."></textarea>
+
+            <button @click="submitFeedback"
+                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
+                Salvesta tagasiside
+            </button>
+
+            <div class="mt-4 border-t pt-3">
+                <h3 class="text-sm font-semibold mb-1">Viimane tagasiside (renderdatud otse HTML-ina):</h3>
+                <!-- VÄGA HALB NÄIDE: v-html -->
+                <div v-if="lastFeedback" class="prose prose-sm max-w-none border rounded p-2 bg-slate-50"
+                    v-html="lastFeedback"></div>
+
+                <p v-else class="text-xs text-slate-400">
+                    Veel pole tagasisidet.
+                </p>
+
+                <p class="mt-2 text-xs text-red-600">
+                    NB! See on XSS näide. Õpilaste ülesanne on muuta see turvaliseks.
+                </p>
+            </div>
+        </section>
+
+        <!-- DEV NOTE (CSS-is peidetud lisa) -->
+        <div class="dev-note mt-4 text-[0.7rem] text-slate-400">
             (Arendaja sisemine märkus – õpilased seda ei pea nägema…)
         </div>
     </div>
