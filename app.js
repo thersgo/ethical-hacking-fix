@@ -1,9 +1,5 @@
 // TAHTLIKULT HALVAD NÄITED – ÕPILASTE LABI JAOKS
 
-// Kõvakodeeritud sisselogimisandmed
-const HARDCODED_ADMIN_USER = "admin";
-const HARDCODED_ADMIN_PASS = "SuperSecret123!";
-
 // Fake API "võtmed"
 const FAKE_API_KEY = "API_KEY_DEMO_123456789";
 const FAKE_JWT_TOKEN = "eyFAKE.JWT.TOKEN.123456789";
@@ -32,14 +28,6 @@ const demoUsers = [
   }
 ];
 
-console.log(
-  "%cDev debug:",
-  "font-weight:bold;",
-  "Ära jäta selliseid logisid tootmisesse."
-);
-console.log("Fake API key:", FAKE_API_KEY);
-console.log("Fake JWT token:", FAKE_JWT_TOKEN);
-
 const { createApp } = Vue;
 
 createApp({
@@ -62,8 +50,7 @@ createApp({
     messageColor() {
       return this.message === "Tere, admin!" ||
         this.message === "Sisselogimine õnnestus."
-        ? "green"
-        : "red";
+          ? "green" : "red";
     },
     storedToken() {
       return window.localStorage.getItem("demo_token") || "(puudub)";
@@ -79,28 +66,20 @@ createApp({
       return base + " bg-white text-slate-700 border-slate-300 hover:bg-slate-100";
     },
     login() {
-      // HOIATUS: see on TAHTLIKULT pealiskaudne & ebaturvaline
-      if (
-        this.username === HARDCODED_ADMIN_USER &&
-        this.password === HARDCODED_ADMIN_PASS
-      ) {
-        this.message = "Tere, admin!";
-        this.loggedInUser = demoUsers[0];
-      } else {
-        // „Lihtne“ login – leiab esimese kasutaja, kelle andmed klapivad
-        const found = this.users.find(
-          (u) =>
-            u.username === this.username &&
-            u.password === this.password
-        );
+      // „Lihtne“ login – leiab esimese kasutaja, kelle andmed klapivad
+      const found = this.users.find(
+        (u) =>
+          u.username === this.username &&
+          u.password === this.password
+      );
 
-        if (found) {
-          this.message = "Sisselogimine õnnestus.";
-          this.loggedInUser = found;
-        } else {
-          this.message = "Vale kasutajanimi või parool.";
-          this.loggedInUser = null;
-        }
+      if (found) {
+        this.message = found.role == "admin"
+          ? "Tere, admin!" : "Sisselogimine õnnestus.";
+        this.loggedInUser = found;
+      } else {
+        this.message = "Vale kasutajanimi või parool.";
+        this.loggedInUser = null;
       }
 
       // Salvestame „tokeni“ localStorage’isse – halb praktika
@@ -124,9 +103,5 @@ createApp({
       this.lastFeedback = this.feedbackText;
       this.feedbackText = "";
     }
-  },
-  mounted() {
-    // Tahtlikult lekime infot ka mountimisel
-    console.log("Rakendus käivitus. Kasutajaid:", this.users.length);
   }
 }).mount("#app");
