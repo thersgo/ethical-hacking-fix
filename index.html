@@ -5,25 +5,16 @@
     <meta charset="UTF-8" />
     <title>Ethical Hacking – Demo rakendus</title>
 
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="min-h-screen bg-slate-100 flex items-center justify-center">
     <div id="app" class="w-full max-w-3xl p-6">
 
         <header class="mb-4 flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">
-                    Ethical Hacking – Demo
-                </h1>
-                <p class="text-xs text-slate-500">
-                    See on TAHTLIKULT ebaturvaline rakendus.
-                    Õpilaste ülesanne on vead üles leida ja parandada.
-                </p>
-            </div>
+            <h1 class="text-2xl font-bold text-slate-800">
+                Ethical Hacking – Demo
+            </h1>
 
             <div class="text-right text-xs text-slate-600">
                 <p v-if="loggedInUser">
@@ -37,20 +28,30 @@
         </header>
 
         <!-- NAVI -->
-        <nav class="flex flex-wrap gap-2 mb-5">
-            <button @click="currentPage = 'login'" :class="navClass('login')">
-                Login
-            </button>
-            <button @click="currentPage = 'profile'" :class="navClass('profile')">
+        <nav class="flex flex-wrap gap-2 mb-5" v-if="loggedInUser">
+            <button
+                @click="currentPage = 'profile'"
+                :class="navClass('profile')"
+            >
                 Profiil
             </button>
-            <button @click="currentPage = 'admin'" :class="navClass('admin')">
+            <button
+                @click="currentPage = 'admin'"
+                :class="navClass('admin')"
+                v-if="loggedInUser.role === 'admin'"
+            >
                 Admin paneel
             </button>
-            <button @click="currentPage = 'settings'" :class="navClass('settings')">
+            <button
+                @click="currentPage = 'settings'"
+                :class="navClass('settings')"
+            >
                 Seaded & API
             </button>
-            <button @click="currentPage = 'feedback'" :class="navClass('feedback')">
+            <button
+                @click="currentPage = 'feedback'"
+                :class="navClass('feedback')"
+            >
                 Tagasiside
             </button>
         </nav>
@@ -86,10 +87,6 @@
             <p v-if="message" class="mt-3 text-sm" :style="{ color: messageColor }">
                 {{ message }}
             </p>
-
-            <p class="mt-3 text-xs text-slate-500">
-                Vihje: vaata View Page Source, DevTools &gt; Console, Sources. Arendaja on olnud VÄGA hooletu.
-            </p>
         </section>
 
         <!-- LEHT: PROFIIL -->
@@ -105,27 +102,12 @@
                 <p><span class="font-semibold">E-mail:</span> {{ loggedInUser.email }}</p>
                 <p><span class="font-semibold">Roll:</span> {{ loggedInUser.role }}</p>
                 <p><span class="font-semibold">Isiklik märkus:</span> {{ loggedInUser.personalNote }}</p>
-
-                <div class="mt-3 border-t pt-3">
-                    <p class="font-semibold text-slate-800 mb-1">„Salajane“ token:</p>
-                    <p class="text-xs break-all text-slate-500">
-                        {{ privateToken }}
-                    </p>
-                    <p class="mt-1 text-xs text-red-600">
-                        NB! See on tahtlik viga – mitte kunagi ei tohiks sellist infot kasutajale kuvada.
-                    </p>
-                </div>
             </div>
         </section>
 
         <!-- LEHT: ADMIN PANEEL -->
         <section v-else-if="currentPage === 'admin'" class="bg-white shadow-md rounded-lg p-5">
             <h2 class="text-lg font-semibold mb-3">Admin paneel</h2>
-
-            <p class="text-xs text-slate-500 mb-2">
-                NB! Admin paneel on TAHTLIKULT halvasti kaitstud.
-                Õpilaste ülesanne on see turvalisemaks teha.
-            </p>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full text-xs border">
@@ -147,10 +129,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <p class="mt-3 text-xs text-red-600">
-                Siin on vähemalt 3 rasket turvaviga. Leia need ja mõtle, kuidas lahendada.
-            </p>
         </section>
 
         <!-- LEHT: SEADED & API -->
@@ -176,11 +154,6 @@
                     <span class="break-all text-slate-500">{{ storedToken }}</span>
                 </div>
             </div>
-
-            <p class="mt-3 text-xs text-red-600">
-                NB! Õpilaste ülesanne on pakkuda välja, kuidas sellist infot
-                päriselus <u>õigesti</u> hoiustada ja käidelda.
-            </p>
         </section>
 
         <!-- LEHT: TAGASISIDE (XSS-ohtlik) -->
@@ -209,11 +182,6 @@
 
                 <p v-else class="text-xs text-slate-400">
                     Veel pole tagasisidet.
-                </p>
-
-                <p class="mt-2 text-xs text-red-600">
-                    NB! See on XSS näide.
-                    Õpilaste ülesanne on muuta see turvaliseks.
                 </p>
             </div>
         </section>

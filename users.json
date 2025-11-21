@@ -1,0 +1,21 @@
+[
+    {
+        "username":     "admin",
+        "password":     "SuperSecret123!",
+        "email":        "admin@example.com",
+        "role":         "admin",
+        "personalNote": "Näen kõike, mis süsteemis toimub."
+    }, {
+        "username":     "karl",
+        "password":     "karl123",
+        "email":        "karl@example.com",
+        "role":         "user",
+        "personalNote": "Meeldib testida asju, mis ei ole minu omad."
+    }, {
+        "username":     "opilane",
+        "password":     "parool",
+        "email":        "student@example.com",
+        "role":         "user",
+        "personalNote": "Tahan lihtsalt läbi saada..."
+    }
+]
